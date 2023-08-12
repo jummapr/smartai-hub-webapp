@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 import {
@@ -15,10 +15,14 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 
-
 export const ProModal = () => {
   const proModal = useProModal();
+  const [isMounted, setIsMounted] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const [loading, setLoading] = useState(false);
 
@@ -30,14 +34,19 @@ export const ProModal = () => {
 
       window.location.href = response.data.url;
     } catch (error) {
-        toast({
-            variant: "destructive",
-            description: "Something went wrong."
-        })
+      toast({
+        variant: "destructive",
+        description: "Something went wrong.",
+      });
     } finally {
       setLoading(false);
     }
   };
+
+  if (!isMounted) {
+    return null;
+  }
+
   return (
     <Dialog open={proModal.isOpen} onOpenChange={proModal.onClose}>
       <DialogContent>
@@ -55,7 +64,9 @@ export const ProModal = () => {
             $9
             <span className="text-sm font-normal">.99 / mo</span>
           </p>
-          <Button disabled={loading} onClick={onSubscribe} variant={"premium"}>Subscribe</Button>
+          <Button disabled={loading} onClick={onSubscribe} variant={"premium"}>
+            Subscribe
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
